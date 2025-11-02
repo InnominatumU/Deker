@@ -1,0 +1,13 @@
+﻿# DEKER
+ERP (Laravel) — módulos de gestão…
+
+## Desenvolvimento
+- PHP 8.3, Laravel 12
+- Como rodar: cp .env.example .env && composer install && php artisan key:generate
+"@ | Out-File -Encoding utf8 README.md
+
+# (opcional) MIT
+@"
+MIT License
+
+Copyright (c) …
