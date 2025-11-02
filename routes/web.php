@@ -63,10 +63,8 @@ Route::middleware('auth')->group(function () {
     Route::view('/ciclo',        'menus.ciclo.index')->middleware('can:menu.ciclo')->name('ciclo.index');
     Route::view('/atendimentos', 'menus.atendimentos.index')->middleware('can:menu.atendimentos')->name('atendimentos.index');
 
-    // (corrigido: nomes)
     Route::view('/relatorios',   'menus.relatorios.index')->middleware('can:menu.relatorios')->name('relatorios.index');
     Route::view('/sobre',        'menus.sobre.index')->middleware('can:menu.sobre')->name('sobre.index');
-    // (não criamos casca para /frota e /servidores; menus abrem dropdowns diretamente)
 
     /* ================== RELATÓRIOS (SUBMENUS) ================== */
     Route::prefix('relatorios')
@@ -100,14 +98,18 @@ Route::middleware('auth')->group(function () {
         ->name('ciclo.')
         ->middleware('can:menu.ciclo')
         ->group(function () {
-            // View principal da Admissão (agora aponta para a sua blade pronta)
+            // View principal da Admissão (blade pronta)
             Route::view('/admissao', 'ciclo.admissao')->name('admissao.index');
 
             // CRUD mínimo de admissões (lista simples + store)
             Route::get('/admissoes', [AdmissoesController::class, 'index'])->name('admissoes.index');
             Route::post('/admissoes', [AdmissoesController::class, 'store'])->name('admissoes.store');
 
-            // Demais submenus (mantidos como placeholders)
+            // ✅ Endpoint AJAX de histórico consumido pela Blade
+            Route::get('/ajax/historico/{cadpen}', [AdmissoesController::class, 'historico'])
+                ->name('admissoes.historico');
+
+            // Demais submenus (placeholders)
             Route::get('/objetos', fn () => response('Ciclo: Objetos (em construção)'))
                 ->name('objetos.index');
             Route::get('/mov-interna', fn () => response('Ciclo: Movimentação Interna (em construção)'))
@@ -242,11 +244,11 @@ Route::middleware('auth')->group(function () {
 
             /* ---------- FICHA DO VISITANTE (LANÇADOR + FICHA) ---------- */
 
-            // Lançador (busca por CPF/ID)
+            // ✅ rota que o menu usa (evita RouteNotFoundException)
             Route::get('visitantes/ficha', [FichaVisitanteController::class, 'index'])
                 ->name('visitantes.ficha.index');
 
-            // Ficha A4 (exibição/print) — usa o método create($id) do controller
+            // Ficha A4 (exibição/print)
             Route::get('visitantes/{id}/ficha', [FichaVisitanteController::class, 'create'])
                 ->whereNumber('id')
                 ->name('visitantes.ficha');
